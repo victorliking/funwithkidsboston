@@ -113,7 +113,33 @@ Always include:
 1. A specific 'Getting There' section (T stop + parking)
 2. 'Good to Know' bullet points (hours, prices, age recommendations)
 3. 'Nearby' section linking to 1-2 related activities
-4. At least one personal anecdote style paragraph`;
+4. At least one personal anecdote style paragraph
+
+IMPORTANT - Affiliate Product Recommendations:
+Before the conclusion, always include a "## Recommended Gear" section with exactly 3 product recommendations relevant to the article topic. Each product MUST use this exact MDX component format:
+
+import ProductCard from '../../components/ProductCard.astro';
+
+<ProductCard
+  name="Product Name"
+  description="One sentence explaining why this is great for Boston families"
+  rating={4}
+  imageUrl="https://picsum.photos/seed/product-keyword/400/400"
+  affiliateUrl="https://amazon.com/s?k=search+keywords+here&tag=funwithkidsbo-20"
+  price="Check Price"
+/>
+
+Rules for the affiliateUrl:
+- Use Amazon search URL format: https://amazon.com/s?k=KEYWORDS&tag=funwithkidsbo-20
+- Replace spaces in keywords with + signs
+- The tag=funwithkidsbo-20 must always be included
+- Choose specific, relevant search keywords (e.g., "kids+waterproof+rain+jacket" not just "jacket")
+
+Product selection by category:
+- things-to-do: activity-related gear (backpacks, water bottles, snack containers, comfortable shoes)
+- gear-reviews: specific product recommendations directly related to the review topic
+- day-trips: travel gear (car organizers, travel games, portable snack bags, kid sunscreen)
+- seasonal: season-appropriate gear (winter boots, summer hats, fall jackets, spring rain gear)`;
 
   let competitorContext = "";
   if (competitors.length > 0) {
@@ -243,7 +269,13 @@ tags: [${tags.map((t) => `"${t}"`).join(", ")}]
 affiliateDisclosure: true
 ---`;
 
-  return `${frontmatter}\n\n${content}\n`;
+  // Add ProductCard import if content contains <ProductCard
+  let importLine = "";
+  if (content.includes("<ProductCard")) {
+    importLine = "\nimport ProductCard from '../../components/ProductCard.astro';\n";
+  }
+
+  return `${frontmatter}${importLine}\n${content}\n`;
 }
 
 // --------------- Queue Management ---------------
