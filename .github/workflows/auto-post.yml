@@ -31,7 +31,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Generate and publish post
+      - name: Check queue size and replenish if needed
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/auto-post.js
+        run: |
+          QUEUE_SIZE=$(node -e "const q=JSON.parse(require('fs').readFileSync('scripts/post-queue.json','utf-8')); const t=JSON.parse(require('fs').readFileSync('scripts/queue-tracker.json','utf-8')); console.log(q.length - t.current)")
+          echo "Queue remaining: $QUEUE_SIZE"
+          if [ "$QUEUE_SIZE" -lt 5 ]; then
+            echo "Queue running low — running keyword research..."
+            node scripts/keyword-research.js
+          fi
+
+      - name: Generate and publish post via content pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/content-pipeline.js
