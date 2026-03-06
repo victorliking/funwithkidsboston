@@ -1,42 +1,43 @@
-name: Auto Generate Blog Post
+name: Auto Post
+
+on:
+  schedule:
+    - cron: '0 14 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
-on:
-  schedule:
-    # UTC 14:00 = EST 9:00 AM
-    - cron: '0 14 * * *'
-  workflow_dispatch: # Allow manual trigger
-
 jobs:
   generate-post:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
 
-      - name: Setup Node.js 18
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Generate post via content pipeline
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate and publish post
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node scripts/content-pipeline.js
 
-      - name: Commit and push
+      - name: Commit and push new post
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --staged --quiet || git commit -m "auto: add new post"
+          git status
+          git diff --staged --quiet && echo "Nothing to commit" || git commit -m "auto: add new post $(date +'%Y-%m-%d')"
           git push origin main
