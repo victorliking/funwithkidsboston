@@ -36,6 +36,13 @@ const CATEGORY_IMAGE_KEYWORDS = {
   "seasonal": "family,seasons,children",
 };
 
+const CATEGORY_DISPLAY_NAMES = {
+  "things-to-do": "Things To Do",
+  "day-trips": "Day Trips",
+  "gear-reviews": "Gear & Reviews",
+  "seasonal": "Seasonal Guides",
+};
+
 function validateArgs(args) {
   if (!args.title) {
     console.error('Error: --title is required');
@@ -97,8 +104,8 @@ Requirements:
 - Include specific Boston locations, addresses, prices, hours, and practical parent tips
 - Sound authentic like a local Boston parent sharing real experiences
 - In appropriate places, insert these placeholder comments on their own line:
-  <!-- PRODUCT_CARD: [brief product description relevant to context] -->
-  <!-- ACTIVITY_CARD: [activity name relevant to context] -->
+  {/* PRODUCT_CARD: [brief product description relevant to context] */}
+  {/* ACTIVITY_CARD: [activity name relevant to context] */}
   Insert 2-3 PRODUCT_CARD placeholders and 2-3 ACTIVITY_CARD placeholders where they naturally fit.
 - Use markdown formatting with ## for H2 headings and ### for H3 headings
 - For the FAQ section, use ### for each question
@@ -153,12 +160,14 @@ function buildMdx({ title, category, age, content, keyword }) {
     ]),
   ];
 
+  const displayCategory = CATEGORY_DISPLAY_NAMES[category] || "Things To Do";
+
   const frontmatter = `---
 title: "${title}"
 description: "${description}"
-pubDate: "${today}"
+pubDate: ${today}
 heroImage: "${heroImage}"
-category: "${category}"
+category: "${displayCategory}"
 ageRange: "${age}"
 tags: [${tags.map((t) => `"${t}"`).join(", ")}]
 affiliateDisclosure: true
