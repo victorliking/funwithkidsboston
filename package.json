@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "new-post": "node scripts/generate-post.js"
+    "new-post": "node --env-file=.env scripts/generate-post.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
