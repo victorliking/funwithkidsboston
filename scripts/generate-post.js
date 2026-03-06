@@ -133,14 +133,10 @@ Requirements:
 }
 
 // --------------- Build MDX file ---------------
-function getHeroImageUrl(category) {
-  const keywords = CATEGORY_IMAGE_KEYWORDS[category] || "children,boston,family";
-  return `https://source.unsplash.com/1200x630/?${keywords}`;
-}
-
 function buildMdx({ title, category, age, content, keyword }) {
   const today = new Date().toISOString().split("T")[0];
-  const heroImage = getHeroImageUrl(category);
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const heroImage = `https://picsum.photos/seed/${slug}/1200/630`;
 
   // Generate description (max 150 chars)
   const firstParagraph = content.split("\n").find((line) => line.trim().length > 50) || "";

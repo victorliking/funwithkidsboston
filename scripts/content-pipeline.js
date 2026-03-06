@@ -211,8 +211,8 @@ ${content.substring(0, 3000)}...`,
 // --------------- Build MDX ---------------
 function buildMdx({ title, category, age, content, keyword }) {
   const today = new Date().toISOString().split("T")[0];
-  const keywords = CATEGORY_IMAGE_KEYWORDS[category] || "children,boston,family";
-  const heroImage = `https://source.unsplash.com/1200x630/?${keywords}`;
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const heroImage = `https://picsum.photos/seed/${slug}/1200/630`;
 
   const firstParagraph = content.split("\n").find((line) => line.trim().length > 50) || "";
   let description = firstParagraph.replace(/[#*\[\]]/g, "").trim();
