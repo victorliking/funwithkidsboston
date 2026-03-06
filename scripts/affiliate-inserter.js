@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, "..");
 const BLOG_DIR = join(PROJECT_ROOT, "src", "content", "blog");
-const AFFILIATE_TAG = "PLACEHOLDER-20";
+const AFFILIATE_TAG = "funwithkidsbo-20";
 
 // --------------- Load product database ---------------
 function loadProducts() {
