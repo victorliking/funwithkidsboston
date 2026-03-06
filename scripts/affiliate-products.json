@@ -1,44 +1,46 @@
 {
   "rain-gear": [
-    {"name": "Columbia Kids Watertight Jacket", "asin": "B001EXAMPLE", "category": "gear-reviews", "keywords": ["rain jacket", "raincoat", "waterproof jacket", "rain gear"]},
-    {"name": "Bogs Kids Rain Boots", "asin": "B002EXAMPLE", "category": "gear-reviews", "keywords": ["rain boots", "rubber boots", "waterproof boots"]},
-    {"name": "Oaki Trail Kids Rain Suit", "asin": "B003EXAMPLE", "category": "gear-reviews", "keywords": ["rain suit", "rain pants", "full body rain"]},
-    {"name": "Totes Kids Clear Bubble Umbrella", "asin": "B004EXAMPLE", "category": "gear-reviews", "keywords": ["umbrella", "rain umbrella", "kids umbrella"]}
+    {
+      "name": "Columbia Boys Rain-Zilla II Jacket",
+      "asin": "B0CPN72R5X",
+      "url": "https://amazon.com/dp/B0CPN72R5X?tag=funwithkidsbo-20",
+      "description": "Waterproof fleece-lined rain jacket, perfect for Boston weather"
+    },
+    {
+      "name": "BOGS Kids Grasp Waterproof Rain Boots",
+      "asin": "B0B4Z5WNLX",
+      "url": "https://amazon.com/dp/B0B4Z5WNLX?tag=funwithkidsbo-20",
+      "description": "100% waterproof, insulated to -22F, easy pull-on handles"
+    },
+    {
+      "name": "BOGS Essential Rain Boots Kids",
+      "asin": "B0CTHJHLMQ",
+      "url": "https://amazon.com/dp/B0CTHJHLMQ?tag=funwithkidsbo-20",
+      "description": "Lightest waterproof kids boot, seamless construction"
+    }
+  ],
+  "indoor-activities": [
+    {
+      "name": "Melissa & Doug Deluxe Activity Table",
+      "asin": "B00GZUEYOE",
+      "url": "https://amazon.com/dp/B00GZUEYOE?tag=funwithkidsbo-20",
+      "description": "Perfect for rainy days at home"
+    }
   ],
   "stroller": [
-    {"name": "UPPAbaby VISTA V2 Stroller", "asin": "B005EXAMPLE", "category": "gear-reviews", "keywords": ["stroller", "city stroller", "full-size stroller"]},
-    {"name": "Babyzen YOYO2 Compact Stroller", "asin": "B006EXAMPLE", "category": "gear-reviews", "keywords": ["compact stroller", "travel stroller", "lightweight stroller"]},
-    {"name": "BOB Gear Revolution Flex 3.0 Jogging Stroller", "asin": "B007EXAMPLE", "category": "gear-reviews", "keywords": ["jogging stroller", "running stroller", "all-terrain stroller"]}
+    {
+      "name": "UPPAbaby Vista V2 Stroller",
+      "asin": "B07PKBK3GX",
+      "url": "https://amazon.com/dp/B07PKBK3GX?tag=funwithkidsbo-20",
+      "description": "Best full-size stroller for Boston streets and parks"
+    }
   ],
-  "backpack": [
-    {"name": "Osprey Daylite Kids Daypack", "asin": "B008EXAMPLE", "category": "gear-reviews", "keywords": ["backpack", "daypack", "kids backpack", "hiking pack"]},
-    {"name": "Skip Hop Zoo Kids Backpack", "asin": "B009EXAMPLE", "category": "gear-reviews", "keywords": ["toddler backpack", "preschool backpack", "small backpack"]},
-    {"name": "Deuter Kid Comfort Child Carrier", "asin": "B010EXAMPLE", "category": "gear-reviews", "keywords": ["child carrier", "hiking carrier", "baby carrier backpack"]}
-  ],
-  "car-seat": [
-    {"name": "Graco 4Ever DLX 4-in-1 Car Seat", "asin": "B011EXAMPLE", "category": "gear-reviews", "keywords": ["car seat", "convertible car seat", "4-in-1"]},
-    {"name": "Chicco KeyFit 35 Infant Car Seat", "asin": "B012EXAMPLE", "category": "gear-reviews", "keywords": ["infant car seat", "baby car seat", "rear-facing"]},
-    {"name": "Britax One4Life ClickTight All-in-One Car Seat", "asin": "B013EXAMPLE", "category": "gear-reviews", "keywords": ["all-in-one car seat", "booster seat", "car seat"]}
-  ],
-  "outdoor": [
-    {"name": "Columbia Kids Benton Springs Fleece", "asin": "B014EXAMPLE", "category": "gear-reviews", "keywords": ["fleece", "warm jacket", "layering", "cold weather"]},
-    {"name": "Merrell Kids Trail Chaser Hiking Shoe", "asin": "B015EXAMPLE", "category": "gear-reviews", "keywords": ["hiking shoes", "trail shoes", "outdoor shoes"]},
-    {"name": "CamelBak Kids eddy+ Water Bottle", "asin": "B016EXAMPLE", "category": "gear-reviews", "keywords": ["water bottle", "kids bottle", "hydration"]},
-    {"name": "Kelty Journey PerfectFIT Child Carrier", "asin": "B017EXAMPLE", "category": "gear-reviews", "keywords": ["child carrier", "hiking carrier", "backpack carrier"]}
-  ],
-  "snow-gear": [
-    {"name": "Bogs Kids Neo-Classic Winter Boot", "asin": "B018EXAMPLE", "category": "gear-reviews", "keywords": ["snow boots", "winter boots", "insulated boots"]},
-    {"name": "Columbia Kids Bugaboo II Fleece Interchange Jacket", "asin": "B019EXAMPLE", "category": "gear-reviews", "keywords": ["winter jacket", "snow jacket", "ski jacket"]},
-    {"name": "N'Ice Caps Kids Thinsulate Waterproof Snow Mittens", "asin": "B020EXAMPLE", "category": "gear-reviews", "keywords": ["snow mittens", "winter gloves", "waterproof gloves"]}
-  ],
-  "indoor-activity": [
-    {"name": "Melissa & Doug Deluxe Standing Art Easel", "asin": "B021EXAMPLE", "category": "things-to-do", "keywords": ["art easel", "painting", "creative play", "indoor activity"]},
-    {"name": "LEGO Classic Large Creative Brick Box", "asin": "B022EXAMPLE", "category": "things-to-do", "keywords": ["lego", "building blocks", "creative play"]},
-    {"name": "National Geographic Kids Microscope Kit", "asin": "B023EXAMPLE", "category": "things-to-do", "keywords": ["microscope", "science kit", "STEM", "educational"]}
-  ],
-  "travel": [
-    {"name": "CALPAK Kids Luggage Set", "asin": "B024EXAMPLE", "category": "day-trips", "keywords": ["luggage", "kids luggage", "travel bag", "suitcase"]},
-    {"name": "Fire HD 10 Kids Tablet", "asin": "B025EXAMPLE", "category": "day-trips", "keywords": ["tablet", "kids tablet", "road trip", "entertainment"]},
-    {"name": "Munchkin Travel Car Seat Tray", "asin": "B026EXAMPLE", "category": "day-trips", "keywords": ["car tray", "travel tray", "road trip", "car activity"]}
+  "hiking": [
+    {
+      "name": "Osprey Poco Child Carrier Backpack",
+      "asin": "B08CJZS89K",
+      "url": "https://amazon.com/dp/B08CJZS89K?tag=funwithkidsbo-20",
+      "description": "Top-rated child carrier for New England hiking trails"
+    }
   ]
 }
