@@ -29,6 +29,13 @@ function parseArgs() {
 
 const VALID_CATEGORIES = ["things-to-do", "day-trips", "gear-reviews", "seasonal"];
 
+const CATEGORY_IMAGE_KEYWORDS = {
+  "things-to-do": "children,boston,family",
+  "day-trips": "family,travel,children",
+  "gear-reviews": "kids,outdoor,gear",
+  "seasonal": "family,seasons,children",
+};
+
 function validateArgs(args) {
   if (!args.title) {
     console.error('Error: --title is required');
@@ -104,8 +111,14 @@ Requirements:
 }
 
 // --------------- Build MDX file ---------------
+function getHeroImageUrl(category) {
+  const keywords = CATEGORY_IMAGE_KEYWORDS[category] || "children,boston,family";
+  return `https://source.unsplash.com/1200x630/?${keywords}`;
+}
+
 function buildMdx({ title, category, age, content, keyword }) {
   const today = new Date().toISOString().split("T")[0];
+  const heroImage = getHeroImageUrl(category);
 
   // Generate description (max 150 chars)
   const firstParagraph = content.split("\n").find((line) => line.trim().length > 50) || "";
@@ -129,6 +142,7 @@ function buildMdx({ title, category, age, content, keyword }) {
 title: "${title}"
 description: "${description}"
 pubDate: "${today}"
+heroImage: "${heroImage}"
 category: "${category}"
 ageRange: "${age}"
 tags: [${tags.map((t) => `"${t}"`).join(", ")}]
