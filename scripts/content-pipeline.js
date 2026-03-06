@@ -124,7 +124,6 @@ import ProductCard from '../../components/ProductCard.astro';
   name="Product Name"
   description="One sentence explaining why this is great for Boston families"
   rating={4}
-  imageUrl="https://picsum.photos/seed/product-keyword/400/400"
   affiliateUrl="https://amazon.com/s?k=search+keywords+here&tag=funwithkidsbo-20"
   price="Check Price"
 />

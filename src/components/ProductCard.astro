@@ -6,7 +6,7 @@ interface Props {
   name: string;
   description: string;
   rating: number;
-  imageUrl: string;
+  imageUrl?: string;
   affiliateUrl: string;
   price?: string;
   badge?: string;
@@ -28,12 +28,19 @@ const starDisplay = '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
           {badge}
         </span>
       )}
-      <img
-        src={imageUrl}
-        alt={name}
-        class="max-h-40 w-auto object-contain rounded-lg"
-        loading="lazy"
-      />
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={name}
+          class="max-h-40 w-auto object-contain rounded-lg"
+          loading="lazy"
+        />
+      ) : (
+        <div class="flex flex-col items-center justify-center text-gray-300">
+          <span class="text-5xl mb-1">🛒</span>
+          <span class="text-xs">View on Amazon</span>
+        </div>
+      )}
     </div>
     <div class="p-4 flex flex-col justify-between flex-1">
       <div>
