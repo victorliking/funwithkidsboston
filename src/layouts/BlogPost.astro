@@ -1,86 +1,167 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+// BlogPost.astro
+// Layout for individual blog posts with sidebar TOC and affiliate disclosure
 
-type Props = CollectionEntry<'blog'>['data'];
+import BaseLayout from './BaseLayout.astro';
+import AffiliateDisclosure from '../components/AffiliateDisclosure.astro';
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  category: string;
+  ageRange?: string;
+  affiliateDisclosure?: boolean;
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  category,
+  ageRange,
+  affiliateDisclosure = true,
+} = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedUpdateDate = updatedDate?.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const categoryColors: Record<string, string> = {
+  'Things To Do': 'bg-blue-100 text-blue-800',
+  'Day Trips': 'bg-green-100 text-green-800',
+  'Gear & Reviews': 'bg-orange-100 text-orange-800',
+  'Seasonal Guides': 'bg-purple-100 text-purple-800',
+};
+
+const categoryColor = categoryColors[category] || 'bg-gray-100 text-gray-800';
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<BaseLayout title={title} description={description} image={heroImage}>
+  <article class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <!-- Hero Image -->
+    {heroImage && (
+      <div class="rounded-2xl overflow-hidden mb-8 max-h-96">
+        <img
+          src={heroImage}
+          alt={title}
+          class="w-full h-full object-cover"
+        />
+      </div>
+    )}
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+    <!-- Post Header -->
+    <header class="mb-8">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <a href={`/category/${category}/`} class={`text-xs font-semibold px-3 py-1 rounded-full ${categoryColor} hover:opacity-80 transition-opacity`}>
+          {category}
+        </a>
+        {ageRange && (
+          <span class="text-xs font-medium bg-warm-100 text-orange-700 px-3 py-1 rounded-full">
+            👶 {ageRange}
+          </span>
+        )}
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
+        {title}
+      </h1>
+      <div class="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+        <time datetime={pubDate.toISOString()}>
+          📅 Published {formattedPubDate}
+        </time>
+        {formattedUpdateDate && (
+          <span>· Updated {formattedUpdateDate}</span>
+        )}
+      </div>
+    </header>
+
+    <!-- Content Area with Sidebar -->
+    <div class="flex flex-col lg:flex-row gap-10">
+      <!-- Main Content -->
+      <div class="flex-1 min-w-0">
+        {affiliateDisclosure && <AffiliateDisclosure />}
+        <div class="prose max-w-none">
+          <slot />
+        </div>
+      </div>
+
+      <!-- Sidebar (Desktop) -->
+      <aside class="hidden lg:block w-72 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <!-- Table of Contents -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">📑 Table of Contents</h3>
+            <nav id="toc" class="text-sm text-gray-500 space-y-2">
+              <p class="text-xs text-gray-400 italic">Contents are generated from headings in the article.</p>
+            </nav>
+          </div>
+
+          <!-- Popular Posts -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">🔥 Popular Posts</h3>
+            <ul class="text-sm space-y-3">
+              <li>
+                <a href="/blog/boston-childrens-museum-guide/" class="text-gray-600 hover:text-primary transition-colors leading-snug block">
+                  Boston Children's Museum: The Complete Family Guide
+                </a>
+              </li>
+              <li>
+                <a href="/blog/best-indoor-activities-boston-kids/" class="text-gray-600 hover:text-primary transition-colors leading-snug block">
+                  15 Best Indoor Activities for Kids in Boston
+                </a>
+              </li>
+              <li>
+                <a href="/blog/best-kids-rain-gear-boston/" class="text-gray-600 hover:text-primary transition-colors leading-snug block">
+                  Best Kids Rain Gear for New England Weather
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  <!-- Simple TOC script: populate from h2/h3 headings -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tocContainer = document.getElementById('toc');
+      const prose = document.querySelector('.prose');
+      if (!tocContainer || !prose) return;
+
+      const headings = prose.querySelectorAll('h2, h3');
+      if (headings.length === 0) return;
+
+      tocContainer.innerHTML = '';
+      const list = document.createElement('ul');
+      list.className = 'space-y-1.5';
+
+      headings.forEach((heading, i) => {
+        if (!heading.id) {
+          heading.id = `heading-${i}`;
+        }
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${heading.id}`;
+        a.textContent = heading.textContent || '';
+        a.className = `block hover:text-orange-600 transition-colors ${heading.tagName === 'H3' ? 'pl-3 text-gray-400' : 'text-gray-600 font-medium'}`;
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+
+      tocContainer.appendChild(list);
+    });
+  </script>
+</BaseLayout>

@@ -1,63 +1,52 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+// src/pages/about.astro
+// About page introducing the site and its creators
+
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
+<BaseLayout
+  title="About Us – FunWithKidsBoston"
+  description="Learn about FunWithKidsBoston — a family guide written by local Boston parents sharing the best things to do with kids in the Greater Boston area."
 >
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">About FunWithKidsBoston 🎉</h1>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+    <div class="prose max-w-none">
+      <p>
+        Welcome! We're a local Boston family who loves exploring everything the Greater Boston area has to offer — from world-class museums and hidden parks to the best rainy-day indoor play spaces and road trips through beautiful New England.
+      </p>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+      <h2>Why We Started This Site</h2>
+      <p>
+        When we became parents, we found ourselves constantly searching for age-appropriate, family-friendly activities in the Boston area. While there's no shortage of things to do, finding reliable, up-to-date information from people who've actually been there with kids was surprisingly hard. So we decided to create the resource we wished we'd had.
+      </p>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
+      <h2>What You'll Find Here</h2>
+      <p>
+        <strong>FunWithKidsBoston</strong> is your go-to guide for:
+      </p>
+      <ul>
+        <li><strong>Things To Do</strong> — Museums, parks, playgrounds, zoos, and local attractions reviewed with families in mind.</li>
+        <li><strong>Day Trips</strong> — Weekend adventures and easy road trips within a few hours of Boston.</li>
+        <li><strong>Gear & Reviews</strong> — Honest reviews of family gear we actually use: strollers, rain gear, travel essentials, and more.</li>
+        <li><strong>Seasonal Guides</strong> — The best activities for every season, from fall apple picking to summer beach trips.</li>
+      </ul>
 
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+      <h2>Our Philosophy</h2>
+      <p>
+        We believe that every family outing doesn't have to be expensive or perfectly planned. Some of our best adventures have been spontaneous trips to a local playground or a simple walk along the Charles River. We aim to share practical, real-world tips that help families spend more quality time together — no matter your budget.
+      </p>
+
+      <h2>Affiliate Disclosure</h2>
+      <p>
+        Some of our articles contain affiliate links. This means we may earn a small commission if you click through and make a purchase, at no additional cost to you. We only recommend products and services we genuinely use and love. For full details, please see our <a href="/disclosure/">Affiliate Disclosure page</a>.
+      </p>
+
+      <h2>Get in Touch</h2>
+      <p>
+        Have a question, suggestion, or want to share your own favorite Boston family spot? We'd love to hear from you! Drop us an email at <strong>hello@funwithkidsboston.com</strong>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

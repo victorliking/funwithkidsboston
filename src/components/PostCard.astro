@@ -1,0 +1,67 @@
+---
+// PostCard.astro
+// Blog list post card with category badge and date
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  heroImage?: string;
+  slug: string;
+  category: string;
+  ageRange?: string;
+}
+
+const { title, description, pubDate, heroImage, slug, category, ageRange } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const categoryColors: Record<string, string> = {
+  'Things To Do': 'bg-blue-100 text-blue-800',
+  'Day Trips': 'bg-green-100 text-green-800',
+  'Gear & Reviews': 'bg-orange-100 text-orange-800',
+  'Seasonal Guides': 'bg-purple-100 text-purple-800',
+};
+
+const categoryColor = categoryColors[category] || 'bg-gray-100 text-gray-800';
+---
+
+<a href={`/blog/${slug}/`} class="group block">
+  <article class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 h-full flex flex-col">
+    {heroImage && (
+      <div class="h-48 overflow-hidden">
+        <img
+          src={heroImage}
+          alt={title}
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
+        />
+      </div>
+    )}
+    <div class="p-5 flex flex-col flex-1">
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span class={`text-xs font-semibold px-2.5 py-1 rounded-full ${categoryColor}`}>
+          {category}
+        </span>
+        {ageRange && (
+          <span class="text-xs font-medium bg-warm-100 text-orange-700 px-2.5 py-1 rounded-full">
+            👶 {ageRange}
+          </span>
+        )}
+      </div>
+      <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors duration-200 leading-snug">
+        {title}
+      </h3>
+      <p class="text-gray-500 text-sm leading-relaxed mb-4 flex-1">
+        {description}
+      </p>
+      <time datetime={pubDate.toISOString()} class="text-xs text-gray-400">
+        {formattedDate}
+      </time>
+    </div>
+  </article>
+</a>

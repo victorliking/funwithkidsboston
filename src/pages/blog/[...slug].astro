@@ -1,20 +1,31 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+// src/pages/blog/[...slug].astro
+// Dynamic blog post route from content collection
+
+import { getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
 }
-type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await render(post);
 ---
 
-<BlogPost {...post.data}>
-	<Content />
+<BlogPost
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+  heroImage={post.data.heroImage}
+  category={post.data.category}
+  ageRange={post.data.ageRange}
+  affiliateDisclosure={post.data.affiliateDisclosure}
+>
+  <Content />
 </BlogPost>

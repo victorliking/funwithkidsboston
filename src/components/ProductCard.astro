@@ -1,0 +1,62 @@
+---
+// ProductCard.astro
+// Displays an affiliate product card for Amazon product recommendations
+
+interface Props {
+  name: string;
+  description: string;
+  rating: number;
+  imageUrl: string;
+  affiliateUrl: string;
+  price?: string;
+  badge?: string;
+}
+
+const { name, description, rating, imageUrl, affiliateUrl, price, badge } = Astro.props;
+
+// Generate star display (1-5)
+const fullStars = Math.floor(Math.min(Math.max(rating, 0), 5));
+const emptyStars = 5 - fullStars;
+const starDisplay = '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
+---
+
+<div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300 my-6">
+  <div class="flex flex-col sm:flex-row">
+    <div class="relative sm:w-48 h-48 sm:h-auto shrink-0 bg-gray-50 flex items-center justify-center p-4">
+      {badge && (
+        <span class="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+          {badge}
+        </span>
+      )}
+      <img
+        src={imageUrl}
+        alt={name}
+        class="max-h-40 w-auto object-contain rounded-lg"
+        loading="lazy"
+      />
+    </div>
+    <div class="p-4 flex flex-col justify-between flex-1">
+      <div>
+        <h3 class="text-lg font-bold text-gray-900 mb-1">{name}</h3>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-accent text-lg tracking-wide">{starDisplay}</span>
+          <span class="text-gray-400 text-sm">({rating}/5)</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-3 leading-relaxed">{description}</p>
+      </div>
+      <div class="flex items-center justify-between gap-3">
+        {price && (
+          <span class="text-xl font-bold text-gray-900">{price}</span>
+        )}
+        <a
+          href={affiliateUrl}
+          target="_blank"
+          rel="nofollow sponsored"
+          class="inline-flex items-center gap-1 bg-secondary hover:bg-secondary-dark text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors duration-200 whitespace-nowrap"
+        >
+          Check Price on Amazon →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

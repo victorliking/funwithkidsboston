@@ -1,49 +1,130 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+// src/pages/index.astro
+// Homepage with hero, categories, latest posts, and newsletter signup
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const latestPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout
+  title="FunWithKidsBoston – Boston's #1 Guide for Family Fun"
+  description="Discover the best things to do with kids in Boston! Local family guides, day trips, indoor activities, gear reviews, and seasonal fun for families in the Greater Boston area."
+>
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-primary via-accent to-secondary py-20 md:py-28">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.2),transparent_60%)]"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
+      <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6 drop-shadow-lg">
+        Boston's #1 Guide for<br />Family Fun 🎉
+      </h1>
+      <p class="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
+        Discover the best things to do with kids in Greater Boston — from museums and parks to rainy day activities and weekend day trips. Written by local parents, for local families.
+      </p>
+      <a
+        href="/category/Things To Do/"
+        class="inline-flex items-center gap-2 bg-white text-primary font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+      >
+        Explore Activities →
+      </a>
+    </div>
+    <!-- Decorative blobs -->
+    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+    <div class="absolute -top-10 -right-10 w-60 h-60 bg-white/10 rounded-full blur-3xl"></div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-3">
+      What Are You Looking For?
+    </h2>
+    <p class="text-gray-500 text-center mb-10 max-w-xl mx-auto">
+      Browse our guides by category to find exactly what your family needs.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <CategoryCard
+        title="Things To Do"
+        description="Museums, parks, playgrounds, and local attractions perfect for families."
+        href="/category/Things To Do/"
+        emoji="🎠"
+      />
+      <CategoryCard
+        title="Day Trips"
+        description="Weekend adventures and road trips within a few hours of Boston."
+        href="/category/Day Trips/"
+        emoji="🚗"
+      />
+      <CategoryCard
+        title="Gear & Reviews"
+        description="Honest reviews of strollers, rain gear, travel essentials, and more."
+        href="/category/Gear & Reviews/"
+        emoji="🎒"
+      />
+      <CategoryCard
+        title="Seasonal Guides"
+        description="The best activities for every season — from fall foliage to summer beaches."
+        href="/category/Seasonal Guides/"
+        emoji="🍂"
+      />
+    </div>
+  </section>
+
+  <!-- Latest Posts Section -->
+  {latestPosts.length > 0 && (
+    <section class="bg-white py-16">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-3">
+          Latest Guides & Tips
+        </h2>
+        <p class="text-gray-500 text-center mb-10 max-w-xl mx-auto">
+          Fresh ideas for your next family adventure in the Boston area.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {latestPosts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              description={post.data.description}
+              pubDate={post.data.pubDate}
+              heroImage={post.data.heroImage}
+              slug={post.id}
+              category={post.data.category}
+              ageRange={post.data.ageRange}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Newsletter Signup (UI placeholder) -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 md:p-12 text-center shadow-lg">
+      <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-3">
+        Get Weekly Family Fun Ideas 📬
+      </h2>
+      <p class="text-white/90 mb-6 max-w-lg mx-auto">
+        Join 5,000+ Boston parents! Get our best guides, seasonal tips, and exclusive deals delivered to your inbox every week.
+      </p>
+      <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="return false;">
+        <input
+          type="email"
+          placeholder="Your email address"
+          class="flex-1 px-4 py-3 rounded-lg text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+        />
+        <button
+          type="submit"
+          class="bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors text-sm whitespace-nowrap"
+        >
+          Subscribe Free →
+        </button>
+      </form>
+      <p class="text-white/60 text-xs mt-3">No spam, ever. Unsubscribe anytime.</p>
+    </div>
+  </section>
+</BaseLayout>
