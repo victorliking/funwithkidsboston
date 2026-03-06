@@ -16,54 +16,80 @@ const { name, description, rating, imageUrl, affiliateUrl, price, badge } = Astr
 
 // Generate star display (1-5)
 const fullStars = Math.floor(Math.min(Math.max(rating, 0), 5));
-const emptyStars = 5 - fullStars;
-const starDisplay = '★'.repeat(fullStars) + '☆'.repeat(emptyStars);
+const halfStar = rating % 1 >= 0.5;
+const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+const starDisplay = '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(emptyStars);
 ---
 
 <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300 my-6">
-  <div class="flex flex-col sm:flex-row">
-    <div class="relative sm:w-48 h-48 sm:h-auto shrink-0 bg-gray-50 flex items-center justify-center p-4">
-      {badge && (
-        <span class="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full z-10">
-          {badge}
-        </span>
-      )}
-      {imageUrl ? (
+  {imageUrl ? (
+    <div class="flex flex-col sm:flex-row">
+      <div class="relative sm:w-48 h-48 sm:h-auto shrink-0 bg-gray-50 flex items-center justify-center p-4">
+        {badge && (
+          <span class="absolute top-2 left-2 bg-primary text-white text-xs font-bold px-2 py-1 rounded-full z-10">
+            {badge}
+          </span>
+        )}
         <img
           src={imageUrl}
           alt={name}
           class="max-h-40 w-auto object-contain rounded-lg"
           loading="lazy"
         />
-      ) : (
-        <div class="flex flex-col items-center justify-center text-gray-300">
-          <span class="text-5xl mb-1">🛒</span>
-          <span class="text-xs">View on Amazon</span>
-        </div>
-      )}
-    </div>
-    <div class="p-4 flex flex-col justify-between flex-1">
-      <div>
-        <h3 class="text-lg font-bold text-gray-900 mb-1">{name}</h3>
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-accent text-lg tracking-wide">{starDisplay}</span>
-          <span class="text-gray-400 text-sm">({rating}/5)</span>
-        </div>
-        <p class="text-gray-600 text-sm mb-3 leading-relaxed">{description}</p>
       </div>
-      <div class="flex items-center justify-between gap-3">
-        {price && (
-          <span class="text-xl font-bold text-gray-900">{price}</span>
-        )}
-        <a
-          href={affiliateUrl}
-          target="_blank"
-          rel="nofollow sponsored"
-          class="inline-flex items-center gap-1 bg-secondary hover:bg-secondary-dark text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors duration-200 whitespace-nowrap"
-        >
-          Check Price on Amazon →
-        </a>
+      <div class="p-4 flex flex-col justify-between flex-1">
+        <div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">{name}</h3>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-accent text-lg tracking-wide">{starDisplay}</span>
+            <span class="text-gray-400 text-sm">({rating}/5)</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-3 leading-relaxed">{description}</p>
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          {price && <span class="text-xl font-bold text-gray-900">{price}</span>}
+          <a
+            href={affiliateUrl}
+            target="_blank"
+            rel="nofollow sponsored"
+            class="inline-flex items-center gap-1 bg-secondary hover:bg-secondary-dark text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors duration-200 whitespace-nowrap"
+          >
+            Check Price on Amazon →
+          </a>
+        </div>
       </div>
     </div>
-  </div>
+  ) : (
+    <div class="p-5">
+      <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            {badge && (
+              <span class="bg-primary text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
+                {badge}
+              </span>
+            )}
+            <h3 class="text-lg font-bold text-gray-900">{name}</h3>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-accent text-base tracking-wide">{starDisplay}</span>
+            <span class="text-gray-400 text-sm">({rating}/5)</span>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed">{description}</p>
+        </div>
+        <div class="flex items-center gap-3 sm:flex-col sm:items-end shrink-0">
+          {price && <span class="text-lg font-bold text-gray-900">{price}</span>}
+          <a
+            href={affiliateUrl}
+            target="_blank"
+            rel="nofollow sponsored"
+            class="inline-flex items-center gap-1.5 bg-[#FF9900] hover:bg-[#e88b00] text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors duration-200 whitespace-nowrap shadow-sm"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 12c0-.9-.1-1.7-.4-2.5C20.4 7.5 18.4 6 16 6c-1.2 0-2.3.4-3.2 1-.3.3-.6.5-.8.8-.2-.3-.5-.6-.8-.8C10.3 6.4 9.2 6 8 6 5.6 6 3.6 7.5 2.9 9.5 2.6 10.3 2.5 11.1 2.5 12c0 4.1 3.4 7.5 7.5 9.5.7.3 1.3.5 2 .5s1.3-.2 2-.5c4.1-2 7.5-5.4 7.5-9.5z"/></svg>
+            View on Amazon →
+          </a>
+        </div>
+      </div>
+    </div>
+  )}
 </div>
