@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import Anthropic from "@anthropic-ai/sdk";
-import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 import slugify from "slugify";
 import { readFileSync, writeFileSync, existsSync } from "fs";

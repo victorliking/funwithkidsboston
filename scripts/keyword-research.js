@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import fetch from "node-fetch";
 import * as cheerio from "cheerio";
 import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";

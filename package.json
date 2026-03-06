@@ -21,7 +21,6 @@
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.17.1",
     "cheerio": "^1.2.0",
-    "node-fetch": "^3.3.2",
     "sharp": "^0.34.3",
     "slugify": "^1.6.6",
     "tailwindcss": "^4.2.1"
