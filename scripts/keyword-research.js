@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import * as cheerio from "cheerio";
 import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
@@ -62,7 +61,7 @@ async function getGoogleSuggestions(keyword) {
   }
 }
 
-// --------------- Google Search Scraping ---------------
+// --------------- Google Search Scraping (regex-based) ---------------
 async function getRelatedSearches(keyword) {
   const url = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&hl=en`;
   console.log(`  🔍 Scraping related searches for: "${keyword}"`);
@@ -75,43 +74,52 @@ async function getRelatedSearches(keyword) {
       },
     });
     const html = await res.text();
-    const $ = cheerio.load(html);
 
-    // Related searches at bottom
+    // Related searches - extract from search links
     const relatedSearches = [];
-    $("a").each((_, el) => {
-      const href = $(el).attr("href") || "";
-      if (href.includes("/search?q=") && !href.includes("&tbm=")) {
-        const text = $(el).text().trim();
-        if (text.length > 5 && text.length < 80 && /kid|child|famil|toddler|baby|boston/i.test(text)) {
-          relatedSearches.push(text);
+    const searchLinkRegex = /\/search\?q=([^&"]+)/g;
+    let match;
+    while ((match = searchLinkRegex.exec(html)) !== null) {
+      try {
+        const decoded = decodeURIComponent(match[1].replace(/\+/g, " "));
+        if (
+          decoded.length > 5 &&
+          decoded.length < 80 &&
+          /kid|child|famil|toddler|baby|boston/i.test(decoded) &&
+          !relatedSearches.includes(decoded)
+        ) {
+          relatedSearches.push(decoded);
         }
+      } catch (e) {
+        // skip malformed URIs
       }
-    });
+    }
 
-    // People Also Ask
+    // People Also Ask - extract data-q attributes
     const paaQuestions = [];
-    $("[data-q]").each((_, el) => {
-      const question = $(el).attr("data-q");
-      if (question && /kid|child|famil|toddler|baby|boston/i.test(question)) {
+    const dataQRegex = /data-q="([^"]+)"/g;
+    while ((match = dataQRegex.exec(html)) !== null) {
+      const question = match[1];
+      if (
+        question &&
+        /kid|child|famil|toddler|baby|boston/i.test(question) &&
+        !paaQuestions.includes(question)
+      ) {
         paaQuestions.push(question);
       }
-    });
+    }
 
-    // Also try jscontroller-based PAA
-    $("span").each((_, el) => {
-      const text = $(el).text().trim();
+    // Also extract questions from visible text
+    const questionRegex = />([^<]{15,100}\?)</g;
+    while ((match = questionRegex.exec(html)) !== null) {
+      const text = match[1].trim();
       if (
-        text.endsWith("?") &&
-        text.length > 15 &&
-        text.length < 100 &&
-        /kid|child|famil|toddler|baby|boston/i.test(text)
+        /kid|child|famil|toddler|baby|boston/i.test(text) &&
+        !paaQuestions.includes(text)
       ) {
-        if (!paaQuestions.includes(text)) {
-          paaQuestions.push(text);
-        }
+        paaQuestions.push(text);
       }
-    });
+    }
 
     console.log(`     Found ${relatedSearches.length} related searches, ${paaQuestions.length} PAA questions`);
     return { relatedSearches, paaQuestions };
@@ -133,7 +141,7 @@ async function main() {
 
   console.log(`📋 Existing queue has ${existingQueue.length} posts\n`);
 
-  const discoveredKeywords = new Map(); // keyword -> source info
+  const discoveredKeywords = new Map();
 
   // Step 1: Google Suggest for each seed
   console.log("=== Step 1: Google Suggestions ===\n");
@@ -145,7 +153,6 @@ async function main() {
         discoveredKeywords.set(lower, { source: "suggest", original: suggestion });
       }
     }
-    // Rate limit
     await new Promise((r) => setTimeout(r, 1000));
   }
 
@@ -168,7 +175,6 @@ async function main() {
       }
     }
 
-    // Rate limit
     await new Promise((r) => setTimeout(r, 2000));
   }
 
@@ -177,14 +183,12 @@ async function main() {
 
   const newPosts = [];
   for (const [keyword, info] of discoveredKeywords) {
-    // Skip very short or very long keywords
     if (keyword.length < 10 || keyword.length > 80) continue;
 
     const category = guessCategory(keyword);
     const age = guessAge(keyword);
     const title = titleCase(info.original);
 
-    // Skip if title is too similar to existing
     const isDuplicate = [...existingTitles].some((existing) => {
       const overlap = existing.split(" ").filter((w) => title.toLowerCase().includes(w));
       return overlap.length > 4;
@@ -195,12 +199,7 @@ async function main() {
       continue;
     }
 
-    newPosts.push({
-      title,
-      category,
-      keyword,
-      age,
-    });
+    newPosts.push({ title, category, keyword, age });
     console.log(`  ✅ Added: "${title}" [${category}] (from ${info.source})`);
   }
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 import Anthropic from "@anthropic-ai/sdk";
-import * as cheerio from "cheerio";
 import slugify from "slugify";
-import { readFileSync, writeFileSync, existsSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -40,11 +39,11 @@ async function validateKeyword(keyword) {
     return { valid: hasVolume, suggestions };
   } catch (err) {
     console.error(`   ⚠️ Validation failed: ${err.message}`);
-    return { valid: true, suggestions: [] }; // proceed anyway
+    return { valid: true, suggestions: [] };
   }
 }
 
-// --------------- Step 2: Competition Analysis ---------------
+// --------------- Step 2: Competition Analysis (regex-based) ---------------
 async function analyzeCompetition(keyword) {
   console.log(`\n🏆 Step 2: Analyzing competition for "${keyword}"...`);
   const url = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&hl=en&num=5`;
@@ -57,30 +56,27 @@ async function analyzeCompetition(keyword) {
       },
     });
     const html = await res.text();
-    const $ = cheerio.load(html);
 
+    // Extract titles from <h3> tags using regex
     const competitors = [];
-    $("div.g").each((i, el) => {
-      if (competitors.length >= 3) return;
-      const title = $(el).find("h3").first().text().trim();
-      const snippet = $(el).find("[data-sncf]").text().trim() || $(el).find(".VwiC3b").text().trim();
-      const link = $(el).find("a").first().attr("href") || "";
-      if (title && title.length > 5) {
-        competitors.push({ title, snippet: snippet.substring(0, 200), link });
+    const h3Regex = /<h3[^>]*>(.*?)<\/h3>/gi;
+    let match;
+    while ((match = h3Regex.exec(html)) !== null && competitors.length < 3) {
+      const title = match[1].replace(/<[^>]*>/g, "").trim();
+      if (title.length > 5) {
+        competitors.push({ title, snippet: "" });
       }
-    });
+    }
 
-    // Fallback: try alternative selectors
-    if (competitors.length === 0) {
-      $("h3").each((i, el) => {
-        if (competitors.length >= 3) return;
-        const title = $(el).text().trim();
-        const parent = $(el).closest("a");
-        const link = parent.attr("href") || "";
-        if (title.length > 5 && link.startsWith("http")) {
-          competitors.push({ title, snippet: "", link });
-        }
-      });
+    // Try to extract snippets from nearby text
+    const snippetRegex = /<div[^>]*class="[^"]*VwiC3b[^"]*"[^>]*>(.*?)<\/div>/gi;
+    let snippetIdx = 0;
+    while ((match = snippetRegex.exec(html)) !== null && snippetIdx < competitors.length) {
+      const snippet = match[1].replace(/<[^>]*>/g, "").trim();
+      if (snippet.length > 20) {
+        competitors[snippetIdx].snippet = snippet.substring(0, 200);
+        snippetIdx++;
+      }
     }
 
     console.log(`   Found ${competitors.length} competitors:`);
@@ -204,7 +200,6 @@ ${content.substring(0, 3000)}...`,
 
   try {
     const responseText = message.content[0].text.trim();
-    // Try to extract JSON from the response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const result = JSON.parse(jsonMatch[0]);
@@ -272,7 +267,6 @@ function saveTracker(tracker) {
 async function main() {
   console.log("\n🏭 === Content Pipeline Started ===\n");
 
-  // Check if queue needs replenishing
   const queue = loadQueue();
   const tracker = loadTracker();
 
@@ -292,7 +286,7 @@ async function main() {
   const validation = await validateKeyword(post.keyword);
 
   // Step 2: Analyze competition
-  await new Promise((r) => setTimeout(r, 1500)); // rate limit
+  await new Promise((r) => setTimeout(r, 1500));
   const competitors = await analyzeCompetition(post.keyword);
 
   // Step 3: Generate article
