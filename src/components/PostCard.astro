@@ -32,14 +32,20 @@ const categoryColor = categoryColors[category] || 'bg-gray-100 text-gray-800';
 
 <a href={`/blog/${slug}/`} class="group block">
   <article class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 h-full flex flex-col">
-    {heroImage && (
-      <div class="h-48 overflow-hidden">
+    {heroImage ? (
+      <div class="h-48 overflow-hidden bg-gray-100">
         <img
           src={heroImage}
           alt={title}
+          width={1200}
+          height={630}
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           loading="lazy"
         />
+      </div>
+    ) : (
+      <div class="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+        <span class="text-4xl">📖</span>
       </div>
     )}
     <div class="p-5 flex flex-col flex-1">
