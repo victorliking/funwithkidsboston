@@ -3,7 +3,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import slugify from "slugify";
 import { readFileSync, writeFileSync } from "fs";
-import { execSync } from "child_process";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
@@ -28,22 +27,21 @@ async function validateKeyword(keyword) {
     });
     const data = await res.json();
     const suggestions = data[1] || [];
-    const hasVolume = suggestions.length > 0;
     console.log(`   Suggestions found: ${suggestions.length}`);
-    if (hasVolume) {
+    if (suggestions.length > 0) {
       console.log(`   ✅ Keyword has search volume`);
       console.log(`   Top suggestions: ${suggestions.slice(0, 3).join(", ")}`);
     } else {
       console.log(`   ⚠️ No suggestions found — keyword may have low volume`);
     }
-    return { valid: hasVolume, suggestions };
+    return { valid: suggestions.length > 0, suggestions };
   } catch (err) {
     console.error(`   ⚠️ Validation failed: ${err.message}`);
     return { valid: true, suggestions: [] };
   }
 }
 
-// --------------- Step 2: Competition Analysis (regex-based) ---------------
+// --------------- Step 2: Competition Analysis ---------------
 async function analyzeCompetition(keyword) {
   console.log(`\n🏆 Step 2: Analyzing competition for "${keyword}"...`);
   const url = `https://www.google.com/search?q=${encodeURIComponent(keyword)}&hl=en&num=5`;
@@ -57,7 +55,6 @@ async function analyzeCompetition(keyword) {
     });
     const html = await res.text();
 
-    // Extract titles from <h3> tags using regex
     const competitors = [];
     const h3Regex = /<h3[^>]*>(.*?)<\/h3>/gi;
     let match;
@@ -68,21 +65,9 @@ async function analyzeCompetition(keyword) {
       }
     }
 
-    // Try to extract snippets from nearby text
-    const snippetRegex = /<div[^>]*class="[^"]*VwiC3b[^"]*"[^>]*>(.*?)<\/div>/gi;
-    let snippetIdx = 0;
-    while ((match = snippetRegex.exec(html)) !== null && snippetIdx < competitors.length) {
-      const snippet = match[1].replace(/<[^>]*>/g, "").trim();
-      if (snippet.length > 20) {
-        competitors[snippetIdx].snippet = snippet.substring(0, 200);
-        snippetIdx++;
-      }
-    }
-
     console.log(`   Found ${competitors.length} competitors:`);
     competitors.forEach((c, i) => {
       console.log(`   ${i + 1}. "${c.title}"`);
-      if (c.snippet) console.log(`      ${c.snippet.substring(0, 100)}...`);
     });
 
     return competitors;
@@ -95,10 +80,11 @@ async function analyzeCompetition(keyword) {
 // --------------- Step 3: Generate Article ---------------
 async function generateArticle({ title, category, keyword, age, competitors }) {
   console.log(`\n✍️ Step 3: Generating article with Claude...`);
+  console.log(`   Title: "${title}"`);
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    console.error("Error: ANTHROPIC_API_KEY not set.");
+    console.error("❌ Error: ANTHROPIC_API_KEY not set.");
     process.exit(1);
   }
 
@@ -124,9 +110,9 @@ Always include:
   let competitorContext = "";
   if (competitors.length > 0) {
     competitorContext = `\n\nHere are the top ${competitors.length} Google results for the keyword "${keyword}":
-${competitors.map((c, i) => `${i + 1}. Title: "${c.title}" — ${c.snippet || "No snippet available"}`).join("\n")}
+${competitors.map((c, i) => `${i + 1}. Title: "${c.title}"`).join("\n")}
 
-Write a MORE comprehensive, MORE helpful, MORE specific article that covers everything they cover PLUS adds unique Boston local insights, personal anecdotes, and practical parent tips they're missing.`;
+Write a MORE comprehensive, MORE helpful, MORE specific article that covers everything they cover PLUS adds unique Boston local insights.`;
   }
 
   const userPrompt = `Write a blog post with the following details:
@@ -149,8 +135,8 @@ Requirements:
   Insert 2-3 PRODUCT_CARD placeholders and 2-3 ACTIVITY_CARD placeholders where they naturally fit.
 - Use markdown formatting with ## for H2 headings and ### for H3 headings
 - For the FAQ section, use ### for each question
-- Do NOT include the title as an H1 — it will be added automatically from frontmatter
-- Do NOT include any frontmatter — it will be added separately
+- Do NOT include the title as an H1
+- Do NOT include any frontmatter
 - Start directly with the introduction paragraph`;
 
   console.log("   🤖 Calling Claude API...");
@@ -252,34 +238,39 @@ affiliateDisclosure: true
 
 // --------------- Queue Management ---------------
 function loadQueue() {
-  return JSON.parse(readFileSync(join(__dirname, "post-queue.json"), "utf-8"));
+  const path = join(__dirname, "post-queue.json");
+  console.log(`   Reading queue from: ${path}`);
+  return JSON.parse(readFileSync(path, "utf-8"));
 }
 
 function loadTracker() {
-  return JSON.parse(readFileSync(join(__dirname, "queue-tracker.json"), "utf-8"));
+  const path = join(__dirname, "queue-tracker.json");
+  console.log(`   Reading tracker from: ${path}`);
+  return JSON.parse(readFileSync(path, "utf-8"));
 }
 
 function saveTracker(tracker) {
-  writeFileSync(join(__dirname, "queue-tracker.json"), JSON.stringify(tracker, null, 2) + "\n", "utf-8");
+  const path = join(__dirname, "queue-tracker.json");
+  writeFileSync(path, JSON.stringify(tracker, null, 2) + "\n", "utf-8");
+  console.log(`   ✅ Tracker saved: ${JSON.stringify(tracker)}`);
 }
 
 // --------------- Main Pipeline ---------------
 async function main() {
   console.log("\n🏭 === Content Pipeline Started ===\n");
 
+  console.log("📋 Reading queue...");
   const queue = loadQueue();
   const tracker = loadTracker();
 
-  if (queue.length - tracker.current < 5) {
-    console.log(`⚠️ Queue running low (${queue.length - tracker.current} posts remaining)`);
-    console.log("   Consider running: npm run research\n");
-  }
+  console.log(`   Queue length: ${queue.length}`);
+  console.log(`   Current tracker position: ${tracker.current}`);
 
   const index = tracker.current % queue.length;
   const post = queue[index];
 
-  console.log(`📋 Queue position: ${index + 1}/${queue.length}`);
-  console.log(`📝 Target: "${post.title}"`);
+  console.log(`\n📋 Queue position: ${index + 1}/${queue.length}`);
+  console.log(`📝 Generating article: "${post.title}"`);
   console.log(`   Category: ${post.category} | Keyword: ${post.keyword} | Age: ${post.age}`);
 
   // Step 1: Validate keyword
@@ -308,30 +299,24 @@ async function main() {
   console.log(`\n💾 Step 5: Saving article...`);
   const mdx = buildMdx({ title: post.title, category: post.category, age: post.age, content, keyword: post.keyword });
   const slug = slugify(post.title, { lower: true, strict: true });
-  const filePath = join(PROJECT_ROOT, "src", "content", "blog", `${slug}.mdx`);
+  const fileName = `${slug}.mdx`;
+  const filePath = join(PROJECT_ROOT, "src", "content", "blog", fileName);
   writeFileSync(filePath, mdx, "utf-8");
-  console.log(`   Saved to: src/content/blog/${slug}.mdx`);
+  console.log(`   ✅ Writing file: ${fileName}`);
+  console.log(`   Full path: ${filePath}`);
+  console.log(`   File size: ${mdx.length} bytes`);
 
   // Update tracker
   tracker.current = (index + 1) % queue.length;
   saveTracker(tracker);
   console.log(`   📊 Queue tracker updated: next position ${tracker.current}`);
 
-  // Git commit & push
-  try {
-    console.log("\n🔄 Committing and pushing...");
-    execSync("git add .", { cwd: PROJECT_ROOT, stdio: "inherit" });
-    execSync(`git commit -m "add: ${post.title}"`, { cwd: PROJECT_ROOT, stdio: "inherit" });
-    execSync("git push origin main", { cwd: PROJECT_ROOT, stdio: "inherit" });
-    console.log("✅ Pushed to origin/main");
-  } catch (err) {
-    console.error("⚠️ Git push failed:", err.message);
-  }
-
-  console.log("\n🎉 === Content Pipeline Complete ===\n");
+  console.log("\n🎉 === Content Pipeline Complete — file saved ===");
+  console.log(`   Generated: src/content/blog/${fileName}`);
+  console.log(`   Title: ${post.title}\n`);
 }
 
 main().catch((err) => {
-  console.error("Fatal error:", err);
+  console.error("❌ Fatal error:", err);
   process.exit(1);
 });
